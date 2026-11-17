@@ -1,0 +1,48 @@
+name: Update and publish SBIR radar
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 7 * * *'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: sbir-pages
+  cancel-in-progress: false
+jobs:
+  validate-build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test collection safety and browser syntax
+        run: |
+          python3 scripts/test_collector.py
+          node --check scripts/dashboard.js
+          node --check scripts/matching.js
+          node scripts/test_matching.cjs
+      - name: Collect and validate official SBIR data
+        run: python3 scripts/update_data.py
+      - name: Test data integrity and browser failure handling
+        run: node scripts/test_dashboard.cjs
+      - name: Build the matching dashboard and dataset
+        run: |
+          python3 scripts/build_page.py
+          cp setup.html public/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+          retention-days: 1
+      - name: Publish only after all checks pass
+        id: deployment
+        uses: actions/deploy-pages@v4
