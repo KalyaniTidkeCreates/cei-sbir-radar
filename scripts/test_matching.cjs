@@ -57,3 +57,40 @@ console.log('PASS project anchoring: selected-project evidence, no cross-project
 // Teaching a technology is not equivalent to developing it.
 context.a=profile('Optical Raman Sensor Network for Persistent Coastal Water Quality Monitoring');context.b=profile('Flu Finders: Data Literacy through Wastewater Monitoring');assert.equal(vm.runInContext('relationFor(a,b)',context),null);vm.runInContext('indexMatching(actual)',context);context.a=get('DOTTIR LABS, INC');context.r=actual.find(r=>r.title.includes('Flu Finders'));context.b=vm.runInContext('profileOf(r)',context);assert.equal(vm.runInContext('relationFor(a,b)',context),null);
 console.log('PASS primary-purpose exclusion: educational content does not qualify as a water-sensor developer.');
+
+// Open-vocabulary matching must work beyond the hand-written problem catalog.
+context.list=[
+ {id:'rail-a',companyKey:'rail-a',title:'Adaptive mobile inspection',abstractText:'This project will develop rail wheel crack inspection and axle fatigue monitoring using acoustic sensing.',date:'2025-01-01'},
+ {id:'rail-b',companyKey:'rail-b',title:'Automated railway inspection platform',abstractText:'Our proposed system will detect axle fatigue and rail wheel cracks using optical inspection.',date:'2025-01-01'},
+ {id:'wrong-a',companyKey:'wrong-a',title:'Automated signal interpretation',abstractText:'This project will develop acoustic quality control for aircraft engine inspection.',date:'2025-01-01'}
+];vm.runInContext('indexMatching(list)',context);p=vm.runInContext('relatedFor(list[0])',context);assert(p.main.some(x=>x.r.id==='rail-b'));let rail=p.main.find(x=>x.r.id==='rail-b');assert(rail.searchEvidence);assert(rail.searchEvidence.quoteA.includes('rail wheel'));assert(rail.searchEvidence.quoteB.includes('rail wheel'));assert(!p.main.some(x=>x.r.id==='wrong-a'));
+// Narrow synonym expansion is accompanied by actual source excerpts.
+p=relation('Implant for urinary incontinence control','Implant for neurogenic bladder dysfunction');assert(p);assert(p.evidence.problemA.includes('urinary'));assert(p.evidence.problemB.includes('bladder'));
+// Generic automation / AI / interpretation cannot by itself make unrelated firms comparable.
+assert.equal(relation('Automated Gram Stain Interpretation Via Digital Holographic Microscopy','AI-Enabled Acoustic Signal Interpretation for Automated Quality Control Testing'),null);
+assert.equal(relation('Computer vision for merchandising forest products','Computer vision for aircraft security'),null);
+assert.equal(relation('Minimally Invasive Orthopedic Fracture Fixation','Minimally Invasive Local Delivery of Cardiac Gene Therapy'),null);
+// Terms from rejected/background approaches are not used to create a text match.
+context.a=profile('Antenna calibration');context.a.lex=vm.runInContext("lexicalProfile({title:'Antenna calibration',abstractText:'Traditional methods use cancer pathology imaging. Our project will develop radio antenna calibration.'})",context);context.b=profile('Cancer pathology imaging');assert.equal(vm.runInContext('relationFor(a,b)',context),null);
+// Purpose errors identified in the source audit must not survive through the structured rules.
+context.r={title:'Drug Delivery for Neuroprotection and Repair in Brain Injuries from Open Skull Fractures',abstractText:'This project will develop a drug delivery system for neural repair after traumatic brain injury.'};assert.equal(vm.runInContext("profileOf(r).problems.has('fracture-fixation')",context),false);
+context.r={title:'Low-Cost High-Efficiency X-ray Imaging Panels for Field Radiography',abstractText:'We will develop high-efficiency DR panels using a perovskite semiconductor.'};assert.equal(vm.runInContext("profileOf(r).problems.has('solar-efficiency')",context),false);
+context.r={title:'High Detectivity Infrared Detector Array Using Wafer-Bonded Detector Technology',abstractText:'Our project will develop a wafer-bonded infrared detector array.'};assert.equal(vm.runInContext("profileOf(r).problems.has('wafer-inspection')",context),false);
+console.log('PASS broader retrieval: abstract-only overlap, narrow synonyms, quoted evidence, no generic-method filler, and primary-purpose exclusions.');
+
+context.a=vm.runInContext("profileOf({title:'Implantable neural interface for neurogenic control',abstractText:'This project will restore sensory awareness of bodily functions.'})",context);context.b=profile('Continuous Identity Verification via Wearable Neural Interfaces');assert.equal(vm.runInContext('relationFor(a,b)',context),null);
+
+// Source-backed cross-industry examples, including formerly empty company views.
+const comparableActual=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/comparable-projects.json'),'utf8')).records;context.comparableActual=comparableActual;vm.runInContext('indexMatching(comparableActual)',context);
+const actualRelation=(a,b)=>{context.a=vm.runInContext('MATCH_PROFILE.get(comparableActual.find(r=>r.awardeeName==='+JSON.stringify(a)+').id)',context);context.b=vm.runInContext('MATCH_PROFILE.get(comparableActual.find(r=>r.awardeeName==='+JSON.stringify(b)+').id)',context);return vm.runInContext('relationFor(a,b)',context)};
+assert.equal(actualRelation('ECATE LLC','MORPHOSIS INC'),null);
+p=actualRelation('ECATE LLC','NEUROBIONICS INC');assert(p);assert(p.evidence.problemA.includes('interface'));assert(p.evidence.problemB.includes('interface'));assert(p.difference.includes('Project purposes'));
+assert.equal(actualRelation('Macula Vision Systems Inc.','SIGNAL-WISE LLC'),null);
+assert.notEqual(actualRelation('MEDICARBONE, INC.','ALTRAZEAL LIFE SCIENCES INC')?.tag,'Problem overlap');
+assert.notEqual(actualRelation('BEYOND SILICON INC','CAPESYM INC')?.tag,'Problem overlap');
+assert.notEqual(actualRelation('FRINGE METROLOGY LLC','PRAEVIUM RESEARCH INC')?.tag,'Problem overlap');
+p=actualRelation('JUNO PROPULSION INC.','CFD Research Corporation');assert(p?.searchEvidence);assert(p.searchEvidence.terms.some(x=>x.includes('detonation')));
+console.log('PASS actual projects: neural-interface capability, propulsion phrases, generic interpretation rejection, and clinical/materials/metrology distinctions.');
+
+// Negating qualifiers must survive shared-phrase labels.
+p=relation('Non-toxic propellant for satellite thrusters','Non-toxic propellant loading for satellite thrusters');assert(p);assert(!p.textTerms.includes('toxic propellant'));assert(p.textTerms.some(t=>t.includes('non-toxic'))||p.textTerms.every(t=>!t.includes('toxic')));

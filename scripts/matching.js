@@ -1,15 +1,15 @@
 /* Transparent, problem-first rules. These are inferred relationships, not verified competitors. */
 const MATCH_WEIGHTS=Object.freeze({problem:40,useCase:25,approach:15,constraints:10,customer:5,milestone:5});
 const PROBLEM_RULES=[
- {id:'wafer-inspection',name:'Detect defects in semiconductor wafers',goal:/(?:detect|inspect|measur|map|metrolog|monitor|quality control).{0,100}(?:defect|surface|bond|wafer)|(?:defect|surface|bonding).{0,100}(?:detect|inspect|measur|quality control|metrolog)/i,context:/wafer|semiconductor manufactur|chip manufactur/i,reject:/diamond defect|defect quantum|color center|colour center|nitrogen.vacancy/i,use:'Semiconductor manufacturing',useRe:/wafer|semiconductor|chip manufactur/i},
+ {id:'wafer-inspection',titleReject:/infrared detector|detector array|photodetector/i,name:'Detect defects in semiconductor wafers',goal:/(?:\bdetect(?:ion|ing|s)?\b|inspect|measur|map|metrolog|monitor|quality control).{0,100}(?:defect|surface|bond|wafer)|(?:defect|surface|bonding).{0,100}(?:\bdetect(?:ion|ing|s)?\b|inspect|measur|quality control|metrolog)/i,context:/wafer|semiconductor manufactur|chip manufactur/i,reject:/diamond defect|defect quantum|color center|colour center|nitrogen.vacancy/i,use:'Semiconductor manufacturing',useRe:/wafer|semiconductor|chip manufactur/i},
  {id:'wafer-repair',name:'Repair semiconductor wafer defects',goal:/repair|defect remov|surface restor/i,context:/wafer|semiconductor/i,use:'Semiconductor manufacturing',useRe:/wafer|semiconductor/i},
  {id:'cryogenic-links',name:'Optical modulation at cryogenic temperatures',goal:/cryogenic|low.temperature/i,context:/modulat|transceiv|optical (?:link|interconnect)/i,use:'Cryogenic optical systems',useRe:/cryogenic|low.temperature/i},
  {id:'chip-cooling',name:'Remove heat from chips and electronics',goal:/cooling|heat remov|thermal management|heat dissipat/i,context:/chip|semiconductor|electronic|data center/i,use:'Electronic thermal management',useRe:/chip|semiconductor|electronic|data center/i},
  {id:'cancer-detection',name:'Detect cancer',goal:/detect|diagnos|screening/i,context:/cancer|tumor|tumour/i,use:'Cancer diagnostics',useRe:/cancer|tumor|tumour/i},
  {id:'cancer-treatment',name:'Treat cancer',goal:/treat|therap|kill|inhibit/i,context:/cancer|tumor|tumour/i,use:'Cancer treatment',useRe:/cancer|tumor|tumour/i},
- {id:'pathogen-detection',name:'Detect infectious pathogens',goal:/detect|diagnos|identif/i,context:/virus|viral|pathogen|infectious|bacterial infection|bacteremia|sepsis|peritonitis|aspergill/i,use:'Infectious-disease testing',useRe:/infectious|pathogen|virus|viral|bacteri/i},
+ {id:'pathogen-detection',name:'Detect infectious pathogens',goal:/detect|diagnos|identif|gram.stain/i,context:/gram.stain|bloodstream infection|virus|viral|pathogen|infectious|bacterial infection|bacteremia|sepsis|peritonitis|aspergill/i,use:'Infectious-disease testing',useRe:/infectious|pathogen|virus|viral|bacteri/i},
  {id:'sample-enrichment',name:'Concentrate pathogens before testing',goal:/enrich|concentrat|isolat/i,context:/virus|viral|pathogen/i,use:'Infectious-disease testing',useRe:/virus|viral|pathogen/i},
- {id:'fracture-fixation',name:'Stabilize and repair bone fractures',titleReject:/postoperative|post.operativ|sensoriz|monitor|physical therapy/i,goal:/fixation|repair|stabiliz/i,context:/fracture|bone|intramedullary/i,use:'Orthopedic fracture care',useRe:/fracture|orthoped|orthopaed|intramedullary/i},
+ {id:'fracture-fixation',name:'Stabilize and repair bone fractures',titleReject:/postoperative|post.operativ|sensoriz|monitor|physical therapy|drug delivery|brain injur|neuroprotect/i,goal:/fixation|repair|stabiliz/i,context:/fracture|bone|intramedullary/i,use:'Orthopedic fracture care',useRe:/fracture|orthoped|orthopaed|intramedullary/i},
  {id:'fracture-monitoring',name:'Monitor bone-fracture healing',goal:/monitor|sensoriz|postoperative|load sens/i,context:/fracture|bone heal|bone plate/i,use:'Orthopedic fracture care',useRe:/fracture|bone heal|bone plate/i},
  {id:'hearing-restoration',name:'Restore or protect hearing',goal:/restor|protect|treat|improv/i,context:/hearing|cochlear|auditory/i,use:'Hearing care',useRe:/hearing|cochlear|auditory/i},
  {id:'retinal-imaging',name:'Detect or monitor retinal disease',goal:/detect|monitor|diagnos|imag/i,context:/retina|macular/i,use:'Retinal care',useRe:/retina|macular/i},
@@ -21,7 +21,7 @@ const PROBLEM_RULES=[
  {id:'hydrogen-production',name:'Produce hydrogen',goal:/produc|generat|electrolys|electrolyz/i,context:/hydrogen/i,use:'Hydrogen production',useRe:/hydrogen/i},
  {id:'battery-safety',name:'Prevent battery fires and thermal runaway',goal:/prevent|detect|mitigat|safety|suppress/i,context:/thermal runaway|battery fire|lithium.ion.*fire/i,use:'Battery safety',useRe:/battery|batteries|lithium/i},
  {id:'battery-recycling',name:'Recover materials from used batteries',goal:/recycl|recover|reclaim/i,context:/battery|batteries|lithium|cathode/i,use:'Battery recycling',useRe:/battery|batteries|cathode/i},
- {id:'solar-efficiency',name:'Improve photovoltaic conversion',goal:/efficien|conversion|tandem|light harvest/i,context:/solar|photovoltaic|perovskite/i,use:'Photovoltaic generation',useRe:/solar|photovoltaic|perovskite/i},
+ {id:'solar-efficiency',titleReject:/power conversion|power converter|inverter/i,name:'Improve photovoltaic conversion',goal:/efficien|conversion|tandem|light harvest/i,context:/solar|photovoltaic/i,use:'Photovoltaic generation',useRe:/solar|photovoltaic|perovskite/i},
  {id:'malware-detection',name:'Detect malicious software',goal:/detect|identif|classif|analy/i,context:/malware|ransomware|malicious software/i,use:'Cybersecurity operations',useRe:/malware|ransomware|malicious software/i},
  {id:'vulnerability-repair',name:'Find and repair software vulnerabilities',goal:/detect|find|repair|patch/i,context:/vulnerabilit|binary software/i,use:'Software security',useRe:/software|binar|code|vulnerabilit/i},
  {id:'gps-denied',name:'Navigate without reliable GPS',goal:/navigat|position|localiz/i,context:/gps.denied|gnss.denied|without gps|gps.unavailable/i,use:'GPS-denied navigation',useRe:/gps.denied|gnss.denied|without gps|gps.unavailable/i},
@@ -30,6 +30,7 @@ const PROBLEM_RULES=[
  {id:'industrial-leak',name:'Detect gas leaks',goal:/detect|localiz|monitor/i,context:/methane|gas leak|pipeline leak/i,use:'Gas infrastructure monitoring',useRe:/methane|gas leak|pipeline/i}
 ];
 const METHOD_RULES={
+ 'Gram-stain microscopy':/gram.stain/i,'Peripheral-nerve stimulation':/peripheral nerve stimulat|nerve stimulat/i,'Neural interface':/neural interface|nervous interface|neural probe/i,
  'Optical interferometry':/interferometr/i,'Raman spectroscopy':/raman/i,'Acoustic sensing':/acoustic sens|ultrasonic sens|ultrasound sens|acoustic imag/i,
  'Electrical impedance sensing':/impedance|dielectrophore/i,'Electrochemical sensing':/electrochemical sens|electrochemical detect/i,
  'Optical spectroscopy':/optical spectroscop|infrared spectroscop|absorption spectroscop/i,'Fluorescence sensing':/fluorescen/i,
@@ -42,14 +43,14 @@ const METHOD_RULES={
  'Small-molecule therapy':/small.molecule|small molecule/i,'Antibody therapy':/monoclonal antibod|antibody.drug conjugate/i,
  'Cell therapy':/cell therap|stem cell therap/i,'Gene therapy':/gene therap/i,
  'Membrane separation':/membrane.{0,60}(?:filter|separat|treat|purif)|reverse osmosis/i,'Adsorption':/adsorben|adsorption/i,'Electrolysis':/electroly[sz]/i,
- 'Perovskite photovoltaics':/perovskite/i,'Silicon photovoltaics':/silicon solar|silicon.*photovoltaic/i,
+ 'Perovskite materials':/perovskite/i,'Silicon photovoltaics':/silicon solar|silicon.*photovoltaic/i,
  'Radar sensing':/\bradar\b/i,'Lidar sensing':/\blidar\b|laser ranging/i,'Magnetic sensing':/magnetomet|magnetic sens/i,
  'Implant load sensing':/sensorized bone plate|load sensor|sensorized.{0,25}implant/i,'Mechanical fixation':/intramedullary nail|bone plate|fixation screw/i,'Polymer-based implant':/polymer.*implant|polymer sleeve|injectable resin/i,
  'Thermal separation':/thermal evaporat|distillat/i,'Chemical leaching':/hydrometallurg|acid leach|chemical leach/i
 };
 const CUSTOMER_RULES={'Semiconductor manufacturers':/chipmaker|semiconductor manufacturer|semiconductor fab/i,'Clinicians and hospitals':/clinician|surgeon|hospital/i,'Water utilities':/water utilit|municipal water/i,'Farmers and growers':/farmer|grower/i,'Defense operators':/warfighter|military operator|military personnel/i,'Battery manufacturers':/battery manufacturer/i};
 const MILESTONE_RULES={'Feasibility evaluation':/feasibility (?:stud|evaluat|assess)/i,'Prototype development':/develop.{0,35}prototype|prototype develop/i,'Pilot demonstration':/pilot.scale|pilot demonstration/i,'Preclinical testing':/preclinical (?:test|stud|validat)/i,'Clinical validation':/clinical validation|clinical trial/i};
-const TARGET_RULES={water:{'PFAS':/\bpfas\b|per.and polyfluoroalkyl/i,'Haloacetic acids':/haloacetic|\bhaas?\b/i,'Dissolved carbon compounds':/dissolved co2|dissolved carbon dioxide/i,'Nutrients':/nitrogenous|nitrification|nitrogen compounds|nitrate|nitrite|ammonium/i,'Metal contaminants':/nickel|chromium|heavy metal/i},cancer:{'Breast cancer':/breast cancer|breast tumor/i,'Lung cancer':/lung cancer|lung tumor/i,'Pancreatic cancer':/pancreatic cancer|pancreatic tumor/i,'Prostate cancer':/prostate cancer/i,'Colorectal cancer':/colorectal cancer|colon cancer/i,'Brain cancer':/glioblastoma|brain tumor/i},pathogen:{'Sepsis':/sepsis|septicemia/i,'Aspergillosis':/aspergill/i,'Bacterial peritonitis':/bacterial peritonitis/i,'SARS-CoV-2':/sars.cov.2|covid.19/i,'Influenza':/influenza/i,'Tuberculosis':/tuberculosis|mycobacterium/i,'Malaria':/malaria|plasmodium/i}};
+const TARGET_RULES={water:{'PFAS':/\bpfas\b|per.and polyfluoroalkyl/i,'Haloacetic acids':/haloacetic|\bhaas?\b/i,'Dissolved carbon compounds':/dissolved co2|dissolved carbon dioxide/i,'Nutrients':/nitrogenous|nitrification|nitrogen compounds|nitrate|nitrite|ammonium/i,'Metal contaminants':/nickel|chromium|mercury|arsenic|cadmium|heavy metal/i},cancer:{'Breast cancer':/breast cancer|breast tumor/i,'Lung cancer':/lung cancer|lung tumor/i,'Pancreatic cancer':/pancreatic cancer|pancreatic tumor/i,'Prostate cancer':/prostate cancer/i,'Colorectal cancer':/colorectal cancer|colon cancer/i,'Brain cancer':/glioblastoma|brain tumor/i},pathogen:{'Bacterial pathogens':/gram.stain|bacteri|sepsis|septicemia/i,'Viral pathogens':/virus|viral|influenza|sars.cov|covid/i,'Fungal pathogens':/fungal|fungus|aspergill/i,'Prion proteins':/\bprion/i,'Sepsis':/sepsis|septicemia/i,'Aspergillosis':/aspergill/i,'Bacterial peritonitis':/bacterial peritonitis/i,'SARS-CoV-2':/sars.cov.2|covid.19/i,'Influenza':/influenza/i,'Tuberculosis':/tuberculosis|mycobacterium/i,'Malaria':/malaria|plasmodium/i}};
 const USE_SCOPES={
  'water-detection':{'Coastal water systems':/coastal|marine|ocean|seawater/i,'Groundwater remediation':/groundwater|tank waste|hazardous waste site/i,'Drinking-water management':/drinking water|potable|municipal water/i,'Wastewater management':/wastewater|sewage/i,'Industrial process water':/industrial.{0,20}water|process water/i},
  'water-removal':{'Coastal water systems':/coastal|marine|ocean|seawater/i,'Groundwater remediation':/groundwater|tank waste|hazardous waste site/i,'Drinking-water management':/drinking water|potable|municipal water/i,'Wastewater management':/wastewater|sewage/i,'Industrial process water':/industrial.{0,20}water|process water/i},
@@ -62,6 +63,7 @@ const targetFamily=id=>id.startsWith('water-')?'water':id.startsWith('cancer-')?
 const COMPLEMENT_PAIRS=[['fracture-fixation','fracture-monitoring'],['sample-enrichment','pathogen-detection'],['water-detection','water-removal'],['wafer-inspection','wafer-repair']];
 
 const APPLICATION_RULES={
+ 'Neural interface systems':/neural interface|nervous interface|neural probe|sensory white.matter|sensory restor/i,
  'Medical anatomical modeling':/anatomical model|pre.surgical planning|preoperative planning|trauma.{0,35}procedural planning/i,
  'Semiconductor manufacturing':/wafer|semiconductor manufactur|chip fabricat/i,
  'Cryogenic optical systems':/cryogenic.{0,70}(?:modulat|optical)|(?:modulat|optical).{0,70}cryogenic/i,
@@ -109,9 +111,9 @@ function profileOf(r){
  const extract=(rules,proposed=false)=>new Map(Object.entries(rules).map(([name,re])=>[name,matchedEvidence(r,re,proposed)]).filter(x=>x[1]));
  for(const [name,re]of Object.entries(APPLICATION_RULES)){if(!uses.has(name)){const e=matchedEvidence(r,re,true);if(e)uses.set(name,e)}}
  const titleUses=[...uses].filter(([,e])=>e.quote===title);if(titleUses.length){const primary=new Set(titleUses.map(([id])=>id));for(const id of uses.keys())if(!primary.has(id))uses.delete(id)}
- return {title,educationPurpose:/literacy|curricul|educational|education|classroom|teaching|student learning|learning game|workforce training/i.test(title),terms:titleTerms(r),constraints:extract(CONSTRAINT_RULES,true),problems,uses,methods:extract(METHOD_RULES,true),customers:extract(CUSTOMER_RULES),milestones:extract(MILESTONE_RULES),targets:new Map(Object.entries(TARGET_RULES).map(([k,v])=>[k,extract(v,true)]))};
+ return {title,scope:projectScope(r),lex:lexicalProfile(r),educationPurpose:/literacy|curricul|educational|education|classroom|teaching|student learning|learning game|workforce training/i.test(title),terms:titleTerms(r),constraints:extract(CONSTRAINT_RULES,true),problems,uses,methods:extract(METHOD_RULES,true),customers:extract(CUSTOMER_RULES),milestones:extract(MILESTONE_RULES),targets:new Map(Object.entries(TARGET_RULES).map(([k,v])=>[k,extract(v,true)]))};
 }
-function indexMatching(list){MATCH_TEXT=new WeakMap();MATCH_PROFILE=new Map();MATCH_PROBLEM_INDEX=new Map();MATCH_METHOD_INDEX=new Map();MATCH_CACHE=new Map();MATCH_ROWS=new Map(list.map(r=>[r.id,r]));TITLE_INDEX=new Map();USE_INDEX=new Map();COMPANY_PROJECTS=new Map();TERM_DF=new Map();TERM_N=list.length;
+function indexStructuredMatching(list){MATCH_TEXT=new WeakMap();MATCH_PROFILE=new Map();MATCH_PROBLEM_INDEX=new Map();MATCH_METHOD_INDEX=new Map();MATCH_CACHE=new Map();MATCH_ROWS=new Map(list.map(r=>[r.id,r]));TITLE_INDEX=new Map();USE_INDEX=new Map();COMPANY_PROJECTS=new Map();TERM_DF=new Map();TERM_N=list.length;
  const add=(map,k,id)=>{if(!map.has(k))map.set(k,new Set());map.get(k).add(id)};
  for(const r of list){const p=profileOf(r);MATCH_PROFILE.set(r.id,p);if(!COMPANY_PROJECTS.has(key(r)))COMPANY_PROJECTS.set(key(r),[]);COMPANY_PROJECTS.get(key(r)).push(r);for(const id of p.problems.keys())add(MATCH_PROBLEM_INDEX,id,r.id);for(const method of p.methods.keys())add(MATCH_METHOD_INDEX,method,r.id);for(const use of p.uses.keys())add(USE_INDEX,use,r.id);for(const term of p.terms){add(TITLE_INDEX,term,r.id);TERM_DF.set(term,(TERM_DF.get(term)||0)+1)}}
  for(const arr of COMPANY_PROJECTS.values())arr.sort((a,b)=>date(b.date)-date(a.date));
@@ -123,15 +125,16 @@ const TASK_METHODS={
  'fracture-monitoring':['Implant load sensing','Electrical impedance sensing'],
  'water-detection':['Raman spectroscopy','Optical spectroscopy','Electrochemical sensing','Fluorescence sensing','Mass spectrometry','Electrical impedance sensing'],
  'cancer-treatment':['Small-molecule therapy','Antibody therapy','Cell therapy','Gene therapy'],
- 'pathogen-detection':['PCR amplification','Molecular sequencing','Immunoassay','CRISPR-based method','Mass spectrometry']
+ 'pathogen-detection':['Gram-stain microscopy','PCR amplification','Molecular sequencing','Immunoassay','CRISPR-based method','Mass spectrometry']
 };
 function taskMethods(p,id){const preferred=(TASK_METHODS[id]||[]).filter(k=>p.methods.has(k));if(preferred.length)return new Map(preferred.map(k=>[k,p.methods.get(k)]));const specific=[...p.methods].filter(([k])=>k!=='Machine-learning model');return specific.length?new Map(specific):p.methods}
 const commonKeys=(a,b)=>[...a.keys()].filter(k=>b.has(k));
 
 function lexicalEvidence(a,b){const shared=[...a.terms].filter(t=>b.terms.has(t));const anchors=shared.filter(t=>!TITLE_NONANCHOR.has(t));const weight=shared.reduce((s,t)=>s+termWeight(t),0),wa=[...a.terms].reduce((s,t)=>s+termWeight(t),0),wb=[...b.terms].reduce((s,t)=>s+termWeight(t),0);return {shared:shared.sort((x,y)=>termWeight(y)-termWeight(x)),anchors,similarity:weight/Math.sqrt(Math.max(1,wa*wb))}}
-function relationFor(a,b){
+function structuredRelationFor(a,b){
  // Educational content about a technology is a different primary purpose from building that technology.
  if(a.educationPurpose!==b.educationPurpose)return null;
+ if((a.scope==='Identity verification'&&b.scope==='Restoration of neural function')||(b.scope==='Identity verification'&&a.scope==='Restoration of neural function'))return null;
  const rawProblems=commonKeys(a.problems,b.problems),targetDifferences=[];
  const shared=rawProblems.filter(id=>{const family=targetFamily(id);if(!family)return true;const x=a.targets.get(family),y=b.targets.get(family);if(x.size&&y.size&&!commonKeys(x,y).length){targetDifferences.push([...x.keys()].join(', ')+' vs '+[...y.keys()].join(', '));return family==='water'}return true});
  const uses=commonKeys(a.uses,b.uses),customers=commonKeys(a.customers,b.customers),milestones=commonKeys(a.milestones,b.milestones),constraints=commonKeys(a.constraints,b.constraints),lex=lexicalEvidence(a,b);
@@ -167,13 +170,140 @@ function relationFor(a,b){
  const evidence={targetsA:targetEvidence(a),targetsB:targetEvidence(b),problemA:problem?.a.quote||workflow?.a.quote||a.title,problemB:problem?.b.quote||workflow?.b.quote||b.title,methodA:left?methodA.get(left)?.quote:undefined,methodB:right?methodB.get(right)?.quote:undefined};
  return {kind:'main',tag,problem:problem?.a.rule.name||'Related funded-work focus',use:uses[0]||'Not established in both records',leftMethod:left||'Approach unclear',rightMethod:right||'Approach unclear',score,components,concepts:problem?[problem.a.rule.name]:workflow?[workflow.a.rule.name,workflow.b.rule.name]:lex.shared.slice(0,4),terms:lex.shared.slice(0,4),constraints,customers,milestones,evidence,why,difference,connection,takeaway,settingA:firstUseA||'Not established',settingB:firstUseB||'Not established',comparisonBasis:problem?'Recognized problem':workflow&&uses.length?'Recognized workflow':uses.length?'Recognized application':'Specific title terms'};
 }
-function relatedFor(r){
- const cacheKey=r.id,companyKey=key(r);if(MATCH_CACHE.has(cacheKey))return MATCH_CACHE.get(cacheKey);const focus=[r],ranked=new Map();
- for(const focal of focus){const a=MATCH_PROFILE.get(focal.id);if(!a)continue;const ids=new Set(),add=set=>{for(const id of set||[])ids.add(id)};
-  for(const p of a.problems.keys())add(MATCH_PROBLEM_INDEX.get(p));for(const use of a.uses.keys())add(USE_INDEX.get(use));for(const method of a.methods.keys())if(method!=='Machine-learning model')add(MATCH_METHOD_INDEX.get(method));
-  for(const term of [...a.terms].sort((x,y)=>termWeight(y)-termWeight(x)).slice(0,10))add(TITLE_INDEX.get(term));
-  for(const [x,y]of COMPLEMENT_PAIRS){if(a.problems.has(x))add(MATCH_PROBLEM_INDEX.get(y));if(a.problems.has(y))add(MATCH_PROBLEM_INDEX.get(x))}
-  for(const id of ids){const candidate=MATCH_ROWS.get(id);if(key(candidate)===companyKey)continue;const relation=relationFor(a,MATCH_PROFILE.get(id));if(!relation)continue;const match={...relation,r:candidate,focus:focal};const previous=ranked.get(key(candidate));if(!previous||match.score>previous.score)ranked.set(key(candidate),match)}
+
+/* Open-vocabulary retrieval: weighted title and proposed-work phrases.
+   No API, model service, or inferred competitor claim. Every shared feature retains source excerpts. */
+const SEARCH_STOP=new Set([...TITLE_STOP,...('a an as at be been being by does during each either has have had having if in is it its may of on or our over per such than that their these they this those to under was were what when where which while who why will would within without we you your us also are can could shall should must both many most several other others across among amongs all any into about between than therefore however thus furthermore additionally additional overall wide range year years assembly strategy conduct conducted conducting complementary further continued anticipated prospective expected importantly subsequent previously substantially substantially promising successful successfully respectively include way ways approach beyond following current currently future two three four five one another including significant significantly preliminary promising feasible feasibility phase project objective objectives aims aim goal goals task tasks proposed propose proposal proposals broader impact impacts potential commercialization commercialize market commercialization products product improve improving improvement improvements improves improved performance novel new innovative innovation innovations method methods technology technologies technological tool tools platform platforms system systems solution solutions approach approaches development developed developing develop develops demonstrate demonstration demonstrated demonstrate demonstrates testing test tests tested evaluate evaluation evaluations validated validate validation study studies studies research researcher researchers program programs award awards support supports supported funded funding federal government foundation national science nsf nih nist dod nasa sbir sttr department university company companies incorporated inc llc corp corporation abstract summary technical application applications use uses used using enable enables enabled enabling provide provides provided providing allow allows achieve achieving achieved need needs needed address addressing challenge challenges benefit benefits opportunities opportunity important including include includes intended respective respectively'.split(/\s+/))]);
+const SEARCH_GENERIC=new Set([...TITLE_NONANCHOR,...('automate automated automating automation interpretation interpret processing process analysis analyze analytical algorithm algorithms modeling model models control controlled quality standard standardized consistent consistency accuracy accurate precise precision rapid real time realtime high throughput throughput efficient efficiency low cost costs affordable scalable scale scaling robust reliability reliable sensitivity sensitive detection detect detects detect diagnostic diagnostics diagnosis diagnose monitoring monitor monitors sensing sensor sensors device devices measurement measure measurements testing test research development validation clinic clinical patient patients tissue tissues cell cells biological biology engineering prototype prototypes optimization optimize optimized improvement evaluation management manufacturing manufacture produce production material materials molecule molecular small experimental experimentation based enabled enable advanced advanced industrial industry field deployment deployed deploy function functional human health new generic another digital minimally invasive non toxic signal speed mass rate rates size large small new generic another computer vision neurostimulation stimulation neural nerve stimulator microfluidic microfluidics spectroscopy spectrometry sequencing fluorescence tomography microscopy holographic'.split(/\s+/))]);
+const SEARCH_CANON={...TITLE_CANON,
+ diagnoses:'diagnostic',diagnosing:'diagnostic',diagnosis:'diagnostic',diagnostics:'diagnostic',diagnostic:'diagnostic',
+ detection:'detect',detecting:'detect',detected:'detect',monitoring:'monitor',monitored:'monitor',
+ sensing:'sensor',sensors:'sensor',images:'image',imaging:'image',image:'image',
+ analysis:'analysis',analyzing:'analysis',analysing:'analysis',analyzer:'analysis',analyser:'analysis',analytical:'analysis',
+ interpretation:'interpretation',interpreting:'interpretation',interprets:'interpretation',interpret:'interpretation',
+ automated:'automate',automation:'automate',automating:'automate',
+ fluorescent:'fluorescence',fluorometric:'fluorescence',holography:'holographic',microscopic:'microscopy',microscope:'microscopy',
+ nervous:'neural',neurogenic:'neural',sensations:'sensory',sensation:'sensory',restoration:'restore',restoring:'restore',restores:'restore',neuroprosthetic:'neuroprosthesis',neuroprosthetics:'neuroprosthesis',neurological:'neural',neuronal:'neural',neurons:'neural',neurologic:'neural',
+ neuromodulation:'neurostimulation',neuromodulatory:'neurostimulation',neurostimulation:'neurostimulation',
+ orthopedic:'orthopedic',orthopaedic:'orthopedic',orthopedics:'orthopedic',orthopaedics:'orthopedic',
+ therapeutics:'therapy',therapeutic:'therapy',therapies:'therapy',treatment:'therapy',treatments:'therapy',treating:'therapy',
+ contaminants:'contaminant',contamination:'contaminant',contaminated:'contaminant',
+ wastewater:'wastewater',sewage:'wastewater',desalination:'desalination',desalinization:'desalination',
+ nitrate:'nitrate',nitrates:'nitrate',bacterial:'bacteria',bacterium:'bacteria',
+ photovoltaics:'photovoltaic',photovoltaic:'photovoltaic',perovskites:'perovskite',
+ defects:'defect',defective:'defect',wafers:'wafer',chiplets:'chiplet',semiconductors:'semiconductor',
+ fractures:'fracture',bones:'bone',implants:'implant',implantable:'implant',
+ batteries:'battery',electrolytes:'electrolyte',lithiumion:'lithium-ion',
+ pathogens:'pathogen',pathogenic:'pathogen',viruses:'virus',viral:'virus',cancers:'cancer',tumours:'tumor',
+ intrusion:'intrusion',intrusions:'intrusion',vulnerabilities:'vulnerability',
+ fertilizers:'fertilizer',fertilisers:'fertilizer',fertiliser:'fertilizer',
+ satellite:'satellite',satellites:'satellite',spacecrafts:'spacecraft',
+ cooling:'cooling',cooled:'cooling',coatings:'coating',coated:'coating'
+};
+const SEARCH_ALIASES=[
+ ['bladder dysfunction',/urinary incontinence|bladder dysfunction|neurogenic bladder|urinary continence/i,true],
+ ['spinal cord injury',/spinal.cord injur|spinal injur/i,true],
+ ['nerve stimulation',/neurostimulat|neuromodulat|neural stimulat|nerve stimulat/i,false],
+ ['gram stain',/gram.stain/i,true],
+ ['holographic microscopy',/holograph(?:ic|y).{0,30}microscop|digital holograph/i,false],
+ ['point of care',/point.of.care|point.of.use/i,false],
+ ['semiconductor wafer',/semiconductor wafer|wafer.{0,25}(?:defect|inspect|metrolog)/i,true],
+ ['additive manufacturing',/additive manufactur|3.?d print|three.dimensional print/i,false],
+ ['wound healing',/wound heal|wound closure|chronic wound/i,true],
+ ['bone fracture',/bone fracture|fracture fixation|fracture stabiliz/i,true],
+ ['water nitrate',/nitrat(?:e|es).{0,35}water|water.{0,35}nitrat(?:e|es)/i,true],
+ ['pfas chemicals',/\bpfas\b|per.and polyfluoroalkyl/i,true],
+ ['carbon dioxide',/carbon dioxide|\bco2\b|co₂/i,true],
+ ['gps denied navigation',/gps.denied|gnss.denied|without gps|gps.unavailable/i,true],
+ ['lithium ion battery',/lithium.ion batter/i,true],
+ ['battery thermal runaway',/thermal runaway|battery fire/i,true],
+ ['liquid biopsy',/liquid biops|circulating tumor dna|cell.free tumor dna/i,true],
+ ['cancer glioblastoma',/glioblastoma|\bgbm\b/i,true],
+ ['antibiotic resistance',/antibiotic resistan|antimicrobial resistan|drug.resistant bacter/i,true],
+ ['intrusion detection',/intrusion detect|network threat detect/i,true],
+ ['quantum diamond defect',/diamond defect quantum|quantum.{0,35}diamond defect|nitrogen.vacancy center/i,true],
+ ['machine learning',/machine learning|deep learning|neural network|artificial intelligence/i,false],
+ ['raman spectroscopy',/raman spectroscop|raman.based|swept.source raman/i,false],
+ ['reverse osmosis',/reverse osmosis|\bro membrane/i,false],
+ ['green hydrogen',/green hydrogen|renewable hydrogen/i,true]
+];
+let TEXT_DF=new Map(),TEXT_INDEX=new Map(),TEXT_N=0;
+const searchIDF=id=>Math.log(1+(TEXT_N||20)/((TEXT_DF.get(id)||0)+1));
+function searchWord(word){let w=SEARCH_CANON[word]||word;if(!SEARCH_CANON[word]&&w.length>5&&w.endsWith('s')&&!/ss$|ics$|ous$|sis$|us$/.test(w))w=w.slice(0,-1);return w}
+function searchTokens(value){return (String(value||'').toLowerCase().replace(/\bx[‐‑–— -]?ray\b/g,'xray').replace(/[‐‑–—-]/g,' ').match(/[a-z][a-z0-9]{2,}/g)||[]).map(searchWord)}
+function projectScope(r){const title=text(r.title),body=sourceParts(r).body;if(/identity verification|authentication|biometric/i.test(title))return 'Identity verification';if(/neural|neurogenic|nervous/i.test(title)&&/restore.{0,80}(?:sens|bodily|body function)|sensory restor/i.test(body))return 'Restoration of neural function';if(/neural|neuroscience|brain organoid/i.test(title+' '+body)&&/research|organoid|neural probe/i.test(title))return 'Neural research tools';return ''}
+function lexicalProfile(r){
+ const parts=sourceParts(r),features=new Map(),quotes=[parts.title];
+ const background=/\b(?:conventional|traditional|previous|prior|existing methods|state.of.the.art|unlike|rather than|instead of|does not rely|do not rely|not rely|not use|avoid using|avoid the use|compared to)\b/i;
+ const intent=/\b(?:this (?:project|proposal|research|technology)|our|we|propos\w*|develop\w*|aim\w*|objective\w*|goal\w*|will|uses?|demonstrat\w*|design\w*|engineer\w*)\b/i;
+ const candidates=parts.sentences.map(s=>s.trim()).filter(s=>s.length>30&&!background.test(s)&&intent.test(s));
+ // Prefer stated work. If the abstract has no explicit intent wording, do not manufacture a purpose from background prose.
+ quotes.push(...candidates.slice(0,7));
+ const add=(id,label,quote,prominence,anchor,words)=>{const previous=features.get(id);if(!previous||previous.p<prominence)features.set(id,{id,label,q:quote,p:prominence,anchor,words});};
+ for(let qi=0;qi<quotes.length;qi++){const q=quotes[qi],prominence=qi===0?3:qi<=3?1.7:1,words=searchTokens(q);
+  for(let wi=0;wi<words.length;wi++){const w=words[wi];if(SEARCH_STOP.has(w)||w.length<3||wi>0&&/^(?:non|not|without)$/.test(words[wi-1]))continue;add('w:'+w,w,q,prominence,!SEARCH_GENERIC.has(w),[w]);}
+  for(let i=0;i<words.length-1;i++){const a=words[i],b=words[i+1];if(SEARCH_STOP.has(a)||SEARCH_STOP.has(b)||a===b)continue;const qualifier=i>0&&/^(?:non|not|without)$/.test(words[i-1])?words[i-1]+'-':'';const anchors=[a,b].filter(w=>!SEARCH_GENERIC.has(w));add('p:'+qualifier+a+' '+b,qualifier+a+' '+b,q,prominence*1.15,anchors.length>0,anchors);}
+  for(const [label,re,anchor]of SEARCH_ALIASES){if(re.test(q))add('c:'+label,label,q,prominence*1.3,anchor,anchor?label.split(' ').filter(w=>!SEARCH_GENERIC.has(w)):[]);}
  }
- const main=[...ranked.values()].sort((a,b)=>b.score-a.score||date(b.r.date)-date(a.r.date)).slice(0,5);const result={main,discovery:[],focusCount:focus.length};MATCH_CACHE.set(cacheKey,result);return result;
+ return {features,quotes,titleTerms:new Set(searchTokens(parts.title).filter(w=>!SEARCH_STOP.has(w)&&!SEARCH_GENERIC.has(w))),norm:0};
+}
+function indexTextSearch(){TEXT_N=MATCH_ROWS.size;TEXT_DF=new Map();TEXT_INDEX=new Map();
+ for(const p of MATCH_PROFILE.values())for(const id of p.lex.features.keys())TEXT_DF.set(id,(TEXT_DF.get(id)||0)+1);
+ for(const [id,p]of MATCH_PROFILE){const chosen=[...p.lex.features].filter(([feature])=>(TEXT_DF.get(feature)||0)<=Math.max(5,TEXT_N*.65)).sort((a,b)=>b[1].p*searchIDF(b[0])-a[1].p*searchIDF(a[0])).slice(0,120);p.lex.features=new Map(chosen);p.lex.norm=Math.sqrt(chosen.reduce((sum,[feature,e])=>sum+(e.p*searchIDF(feature))**2,0))||1;
+  for(const [feature]of chosen){if(!TEXT_INDEX.has(feature))TEXT_INDEX.set(feature,[]);TEXT_INDEX.get(feature).push(id)}
+ }
+}
+function textOverlap(a,b){
+ const common=[];let dot=0;for(const [id,x]of a.lex.features){const y=b.lex.features.get(id);if(!y)continue;const idf=searchIDF(id),weight=idf*idf*x.p*y.p;dot+=weight;common.push({id,x,y,weight})}
+ common.sort((x,y)=>y.weight-x.weight);
+ const norm=p=>p.lex.norm||Math.sqrt([...p.lex.features].reduce((sum,[id,e])=>sum+(searchIDF(id)*e.p)**2,0))||1;
+ const similarity=dot/(norm(a)*norm(b)),anchors=new Set(common.filter(x=>x.x.anchor&&x.y.anchor).flatMap(x=>x.x.words));
+ const titleA=[...anchors].filter(x=>a.lex.titleTerms.has(x)),titleB=[...anchors].filter(x=>b.lex.titleTerms.has(x));
+ const phrases=common.filter(x=>x.x.anchor&&x.y.anchor&&x.id.startsWith('p:'));
+ const aliases=common.filter(x=>x.x.anchor&&x.y.anchor&&x.id.startsWith('c:'));
+ const headEvidence=titleA.length>0&&titleB.length>0;
+ const preciseTitlePhrase=phrases.some(item=>item.x.words.length>=2&&item.x.p>=3&&item.y.p>=3);
+ const supported=anchors.size>=2&&(phrases.length>0||aliases.length>0||headEvidence)&&(similarity>=.065||preciseTitlePhrase&&similarity>=.04)&&(titleA.length+titleB.length>0||anchors.size>=4&&similarity>=.16);
+ const sourceQuote=side=>{const totals=new Map();for(const item of common.filter(x=>x.x.anchor&&x.y.anchor)){const quote=item[side].q;totals.set(quote,(totals.get(quote)||0)+item.weight)}return [...totals].sort((a,b)=>b[1]-a[1])[0]?.[0]};
+ // Prefer exact meaningful phrases, then narrow synonym concepts, then individual terms. Never call these verified semantic equivalence.
+ const explanatory=[...phrases,...aliases,...common.filter(x=>x.id.startsWith('w:')&&x.x.anchor&&x.y.anchor)];
+ const terms=[];for(const item of explanatory){const label=item.x.label;if(terms.some(t=>t.includes(label)))continue;terms.push(label);if(terms.length===4)break}
+ const coverage=Math.min(1,anchors.size/6),score=18+40*Math.min(1,similarity)+10*coverage+(phrases.length?6:0)+(headEvidence?6:0);
+ return {supported,similarity,score,terms,anchors:[...anchors],quoteA:explanatory[0]?.x.q||sourceQuote('x'),quoteB:explanatory[0]?.y.q||sourceQuote('y'),headEvidence,common};
+}
+function indexMatching(list){indexStructuredMatching(list);indexTextSearch()}
+function titleContrast(a,b){const left=[...a.lex.titleTerms].filter(w=>!b.lex.titleTerms.has(w)).slice(0,3),right=[...b.lex.titleTerms].filter(w=>!a.lex.titleTerms.has(w)).slice(0,3);return left.length&&right.length?'Title focus: '+left.join(' · ')+' vs '+right.join(' · '):'No further distinction classified; review the source excerpts'}
+function relationFor(a,b){
+ if(a.educationPurpose!==b.educationPurpose)return null;
+ if((a.scope==='Identity verification'&&b.scope==='Restoration of neural function')||(b.scope==='Identity verification'&&a.scope==='Restoration of neural function'))return null;
+ const quantumMismatch=(a.problems.has('wafer-inspection')&&/diamond defect quantum|defect quantum systems/i.test(b.title)&&!/wafer|semiconductor manufactur/i.test(b.title))||(b.problems.has('wafer-inspection')&&/diamond defect quantum|defect quantum systems/i.test(a.title)&&!/wafer|semiconductor manufactur/i.test(a.title));if(quantumMismatch)return null;
+ const original=structuredRelationFor(a,b),overlap=textOverlap(a,b);
+ const structured=original&&original.comparisonBasis!=='Specific title terms';
+ const capabilityMethods=commonKeys(a.methods,b.methods).filter(m=>m!=='Machine-learning model'),capabilityUses=commonKeys(a.uses,b.uses);
+ const capability=capabilityMethods.length>0&&capabilityUses.length>0;
+ if(!structured&&!overlap.supported&&!capability)return null;
+ if(original&&structured){return {...original,score:original.score+(overlap.supported?Math.min(12,overlap.similarity*22):0),textTerms:overlap.supported?overlap.terms:[],textSimilarity:overlap.similarity,searchEvidence:overlap.supported?{quoteA:overlap.quoteA,quoteB:overlap.quoteB,terms:overlap.terms}:null}}
+ const methodA=taskMethods(a,''),methodB=taskMethods(b,''),sharedMethod=commonKeys(methodA,methodB).find(m=>m!=='Machine-learning model'),left=sharedMethod||methodA.keys().next().value,right=sharedMethod||methodB.keys().next().value;
+ const uses=commonKeys(a.uses,b.uses),targetDifferences=[];for(const family of TARGET_RULES?Object.keys(TARGET_RULES):[]){const x=a.targets.get(family),y=b.targets.get(family);if(x?.size&&y?.size&&!commonKeys(x,y).length)targetDifferences.push([...x.keys()].join(', ')+' vs '+[...y.keys()].join(', '))}
+ const oppositeKnownTargets=targetDifferences.length>0;
+ const tag=capability&&!overlap.supported?'Shared method':uses.length?'Application overlap':sharedMethod?'Shared method':'Project similarity';
+ const connection=capability&&!overlap.supported?'Shared method: '+capabilityMethods[0]+' · '+capabilityUses[0]:'Shared project concepts: '+overlap.terms.slice(0,3).join(' · ');
+ const settingA=a.uses.keys().next().value||'Not classified',settingB=b.uses.keys().next().value||'Not classified';
+ const difference=oppositeKnownTargets?'Stated targets: '+targetDifferences[0]:settingA!=='Not classified'&&settingB!=='Not classified'&&settingA!==settingB?'Stated uses: '+settingA+' vs '+settingB:left&&right&&left!==right?'Approaches: '+left+' vs '+right:a.scope&&b.scope&&a.scope!==b.scope?'Project purposes: '+a.scope+' vs '+b.scope:titleContrast(a,b);
+ const evidence={problemA:overlap.quoteA||a.uses.get(capabilityUses[0])?.quote||a.title,problemB:overlap.quoteB||b.uses.get(capabilityUses[0])?.quote||b.title,methodA:left?methodA.get(left)?.quote:undefined,methodB:right?methodB.get(right)?.quote:undefined,targetsA:[],targetsB:[]};
+ return {kind:'main',tag,problem:'Project-description similarity',use:uses[0]||'Not established in both records',leftMethod:left||'Approach unclear',rightMethod:right||'Approach unclear',score:(capability&&!overlap.supported?38:overlap.score)*(oppositeKnownTargets?.65:1)*(a.scope&&b.scope&&a.scope!==b.scope?.8:1),components:{text:overlap.score},concepts:overlap.terms.length?overlap.terms:capabilityMethods,terms:overlap.terms,textTerms:overlap.supported?overlap.terms:[],constraints:commonKeys(a.constraints,b.constraints),customers:commonKeys(a.customers,b.customers),milestones:[],evidence,why:connection,difference,connection,takeaway:'Compare the stated project goals and validation requirements.',settingA,settingB,comparisonBasis:capability&&!overlap.supported?'Shared classified method and named application':'Weighted title and proposed-work abstract search',textSimilarity:overlap.similarity,searchEvidence:overlap.supported?{quoteA:overlap.quoteA,quoteB:overlap.quoteB,terms:overlap.terms}:null};
+}
+function relatedFor(r){
+ const cacheKey=r.id,companyKey=key(r);if(MATCH_CACHE.has(cacheKey))return MATCH_CACHE.get(cacheKey);const a=MATCH_PROFILE.get(r.id);if(!a)return {main:[],discovery:[],focusCount:0};const candidates=new Map();
+ const add=(set,boost)=>{for(const id of set||[])candidates.set(id,(candidates.get(id)||0)+boost)};
+ for(const problem of a.problems.keys())add(MATCH_PROBLEM_INDEX.get(problem),12);
+ for(const use of a.uses.keys())add(USE_INDEX.get(use),8);
+ for(const method of a.methods.keys())if(method!=='Machine-learning model')add(MATCH_METHOD_INDEX.get(method),3);
+ for(const [x,y]of COMPLEMENT_PAIRS){if(a.problems.has(x))add(MATCH_PROBLEM_INDEX.get(y),5);if(a.problems.has(y))add(MATCH_PROBLEM_INDEX.get(x),5)}
+ const query=[...a.lex.features].filter(([id,e])=>e.anchor&&(TEXT_DF.get(id)||0)<Math.max(5,TEXT_N*.25)).sort((x,y)=>y[1].p*searchIDF(y[0])-x[1].p*searchIDF(x[0])).slice(0,24);
+ for(const [feature,e]of query)add(TEXT_INDEX.get(feature),searchIDF(feature)*Math.min(3,e.p));
+ const ranked=new Map();for(const [id]of [...candidates].sort((a,b)=>b[1]-a[1]).slice(0,600)){
+  const other=MATCH_ROWS.get(id);if(!other||key(other)===companyKey)continue;const relation=relationFor(a,MATCH_PROFILE.get(id));if(!relation)continue;const match={...relation,r:other,focus:r};const previous=ranked.get(key(other));if(!previous||match.score>previous.score)ranked.set(key(other),match)
+ }
+ const main=[...ranked.values()].sort((a,b)=>b.score-a.score||date(b.r.date)-date(a.r.date)).slice(0,5),result={main,discovery:[],focusCount:1};MATCH_CACHE.set(cacheKey,result);return result;
 }

@@ -17,6 +17,10 @@ const ctx={document,location:{href:'https://example.github.io/radar/',protocol:'
  assert.equal(vm.runInContext('SLIDE_SECONDS',ctx),10);
  ctx.clockStamp=Date.parse('2026-11-17T23:56:00Z');assert(vm.runInContext('azTime(clockStamp)',ctx).includes('4:56 PM'));assert(vm.runInContext('azTime(clockStamp)',ctx).endsWith(' AZ'));
  ctx.methodGap={evidence:{},connection:'Water monitoring',difference:'Approach details are incomplete in one or both records'};assert(vm.runInContext('comparisonCopy(methodGap).distinction',ctx).includes('not classified'));assert.equal(vm.runInContext('comparisonCopy(methodGap).question',ctx),'');
+ // Explicit available-year labels and calendar start-year filtering.
+ assert(els.period.innerHTML.includes('All years ('));
+ assert(!els.period.innerHTML.includes('Loaded years'));
+ ctx.savedRows=vm.runInContext('rows',ctx);ctx.yearRows=[{id:'2023',date:'2023-05-01'},{id:'2024',date:'2024-06-01'},{id:'unknown',date:''},{id:'future',date:'2999-01-01'}];vm.runInContext('rows=yearRows',ctx);els.period.value='year:2023';assert.equal(vm.runInContext('selected().map(r=>r.id).join()' ,ctx),'2023');els.period.value='0';assert.equal(vm.runInContext('selected().length',ctx),3);vm.runInContext('rows=savedRows',ctx);els.period.value='730';
  // An outage retains the last good dataset and never advances the collector clock.
  const before=vm.runInContext('source.checkedAt',ctx);await vm.runInContext('refresh()',ctx);assert.equal(vm.runInContext('source.checkedAt',ctx),before);assert(els.feedbanner.textContent.includes('SAVED DATA'));
  // Same-version checks download only the small manifest, preserve active company, and confirm integrity state.
